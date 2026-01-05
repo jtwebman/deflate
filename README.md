@@ -26,6 +26,25 @@ remaining = binary_part(concatenated_streams, bytes_consumed, byte_size(concaten
 {:ok, data2, _} = Deflate.inflate(remaining)
 ```
 
+## Why Not Use Existing Libraries?
+
+There are several compression libraries on Hex. Here's why we built this one:
+
+| Feature | deflate | [ezlib](https://hex.pm/packages/ezlib) | [compresso](https://hex.pm/packages/compresso) | [zip_stream](https://hex.pm/packages/zip_stream) |
+|---------|---------|-------|-----------|------------|
+| **Byte consumption tracking** | ✅ | ❌ | ❌ | ❌ |
+| **Chunked network input** | ✅ | ❌ | ❌ | ❌ |
+| **Pure Elixir (no NIFs)** | ✅ | ❌ (C NIF) | ❌ (wraps :zlib) | ❌ (wraps :zlib) |
+| **Streaming output** | ✅ | ❌ | ❌ | ✅ |
+
+**The core problem:** All existing libraries wrap `:zlib` or use C NIFs. None of them tell you how many compressed bytes were consumed. This makes it impossible to parse formats with concatenated streams.
+
+- **ezlib** - C NIF bindings to zlib. Fast, but no byte tracking, and adds native dependency.
+- **compresso** - Gleam package wrapping :zlib. No byte tracking.
+- **zip_stream** - Great for ZIP files specifically, but uses :zlib internally. No byte tracking for raw streams.
+
+We needed byte tracking for [SourceKeep](https://github.com/jtwebman/sourcekeep) (a git hosting platform) to parse git pack files. The only solution was implementing DEFLATE from scratch in pure Elixir.
+
 ## Installation
 
 Add `deflate` to your list of dependencies in `mix.exs`:
