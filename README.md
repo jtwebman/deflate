@@ -43,7 +43,7 @@ There are several compression libraries on Hex. Here's why we built this one:
 - **compresso** - Gleam package wrapping :zlib. No byte tracking.
 - **zip_stream** - Great for ZIP files specifically, but uses :zlib internally. No byte tracking for raw streams.
 
-We needed byte tracking for [SourceKeep](https://github.com/jtwebman/sourcekeep) (a git hosting platform) to parse git pack files. The only solution was implementing DEFLATE from scratch in pure Elixir.
+We needed byte tracking for [SourceKeep](https://sourcekeep.dev) (a git hosting platform) to parse git pack files. The only solution was implementing DEFLATE from scratch in pure Elixir.
 
 ## Installation
 
